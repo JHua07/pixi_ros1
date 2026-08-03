@@ -9,7 +9,7 @@ version = "0.1.0"
 # ============================================================
 # 环境激活脚本：source ROS + 工作空间
 # ============================================================
-activate_ros = { cmd = "echo \"source $(pixi info --manifest-path pixi.toml | grep 'Environment path' | cut -d' ' -f4)/setup.bash && source $(pixi info --manifest-path pixi.toml | grep 'Environment path' | cut -d' ' -f4)/setup.sh && source devel_ws/setup.bash\"", description = "打印 ROS 环境激活命令" }
+activate_ros = { cmd = "echo \"source $(pixi info --manifest-path pixi.toml | grep 'Environment path' | cut -d' ' -f4)/setup.bash && source devel/setup.bash\"", description = "打印 ROS 环境激活命令" }
 
 # ============================================================
 # 初始化工作空间
@@ -38,20 +38,15 @@ build_livox_ros_driver = { cmd = "bash scripts/build_livox_ros_driver.sh", descr
 build_pangolin = { cmd = "bash scripts/build_pangolin.sh", description = "编译安装 Pangolin (ORB_SLAM2 可视化依赖)" }
 
 # ============================================================
-# 通用 cmake 构建 (使用 src/CMakeLists.txt)
+# 一键构建 (使用 src/CMakeLists.txt)
 # ============================================================
-cmake_build = { cmd = """
-    source $CONDA_PREFIX/setup.bash 2>/dev/null
+build = { cmd = """
+    source $CONDA_PREFIX/setup.bash
     rm -rf build devel
     mkdir -p build && cd build
-    cmake ../src -DBUILD_LIVOX_ROS_DRIVER=$BUILD_LIVOX -DBUILD_ORB_SLAM2=$BUILD_ORB
+    cmake ../src -DCATKIN_DEVEL_PREFIX=../devel
     make -j$(nproc)
-""", description = "通用 cmake 构建 (BUILD_LIVOX=ON BUILD_ORB=ON 可选)" }
-
-# ============================================================
-# 一键构建所有
-# ============================================================
-build_all = { cmd = "echo 'Building all packages via CMakeLists.txt...'", description = "一键构建所有包", depends-on = ["build_pangolin", "build_livox_sdk", "link_livox_driver"] }
+""", description = "构建所有包 (cmake ../src && make)", depends-on = ["build_pangolin", "build_livox_sdk", "link_livox_driver"] }
 
 # ============================================================
 # 打印环境信息
