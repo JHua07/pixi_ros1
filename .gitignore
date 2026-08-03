@@ -1,0 +1,17 @@
+# pixi environments
+.pixi/*
+!.pixi/config.toml
+pixi.lock
+
+# 构建产物
+devel_ws/
+
+# 从 GitHub 克隆的第三方源码（由脚本自动获取）
+third_party/livox_sdk/
+third_party/livox_ros_driver/
+
+# IDE / 系统文件
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
