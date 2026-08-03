@@ -3,7 +3,7 @@ set -e
 
 echo "Patching livox_ros_driver for GCC 14 compatibility..."
 
-DRIVER_CMAKE="third_party/livox_ros_driver/livox_ros_driver/CMakeLists.txt"
+DRIVER_CMAKE="src/third_party/livox_ros_driver/livox_ros_driver/CMakeLists.txt"
 
 # 1. 让 find_library 也在 CONDA_PREFIX/lib 下搜索 livox_sdk
 sed -i "s|find_library(LIVOX_SDK_LIBRARY liblivox_sdk_static.a /usr/local/lib)|find_library(LIVOX_SDK_LIBRARY liblivox_sdk_static.a $CONDA_PREFIX/lib /usr/local/lib)|" "$DRIVER_CMAKE"
@@ -14,19 +14,19 @@ sed -i 's/-Werror//g' "$DRIVER_CMAKE"
 
 # 3. 为缺少 <memory> 的头文件添加 include
 for header in \
-    third_party/livox_ros_driver/livox_ros_driver/timesync/timesync.h \
-    third_party/livox_ros_driver/livox_ros_driver/livox_ros_driver/lddc.h \
-    third_party/livox_ros_driver/livox_ros_driver/livox_ros_driver/lds.h \
-    third_party/livox_ros_driver/livox_ros_driver/livox_ros_driver/lds_lidar.h \
-    third_party/livox_ros_driver/livox_ros_driver/livox_ros_driver/lds_hub.h \
-    third_party/livox_ros_driver/livox_ros_driver/livox_ros_driver/ldq.h; do
+    src/third_party/livox_ros_driver/livox_ros_driver/timesync/timesync.h \
+    src/third_party/livox_ros_driver/livox_ros_driver/livox_ros_driver/lddc.h \
+    src/third_party/livox_ros_driver/livox_ros_driver/livox_ros_driver/lds.h \
+    src/third_party/livox_ros_driver/livox_ros_driver/livox_ros_driver/lds_lidar.h \
+    src/third_party/livox_ros_driver/livox_ros_driver/livox_ros_driver/lds_hub.h \
+    src/third_party/livox_ros_driver/livox_ros_driver/livox_ros_driver/ldq.h; do
     if [ -f "$header" ] && ! grep -q '<memory>' "$header"; then
         sed -i '/#include <thread>/a #include <memory>' "$header"
     fi
 done
 
 # 4. 修复 PCL shared_ptr 兼容性 — 仅 PublishCustomPointcloud 函数中使用 PointCloud::Ptr
-LDDC_CPP="third_party/livox_ros_driver/livox_ros_driver/livox_ros_driver/lddc.cpp"
+LDDC_CPP="src/third_party/livox_ros_driver/livox_ros_driver/livox_ros_driver/lddc.cpp"
 if [ -f "$LDDC_CPP" ]; then
     # 先恢复所有可能的错误修改
     sed -i 's/p_publisher->publish(\*cloud)/p_publisher->publish(cloud)/g' "$LDDC_CPP"
@@ -55,9 +55,6 @@ echo "Sourcing ROS environment..."
 source "$CONDA_PREFIX/setup.bash"
 
 echo "Building livox_ros_driver with catkin_make..."
-cd devel_ws
-catkin_make \
-    -DCATKIN_DEVEL_PREFIX="$PWD/devel" \
-    -DCMAKE_INSTALL_PREFIX="$CONDA_PREFIX"
+catkin_make -DCATKIN_DEVEL_PREFIX=devel -DCMAKE_INSTALL_PREFIX="$CONDA_PREFIX"
 
 echo "livox_ros_driver build complete."

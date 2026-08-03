@@ -3,12 +3,18 @@
 !.pixi/config.toml
 pixi.lock
 
-# 构建产物
-devel_ws/
+# catkin 工作空间（构建产物）
+build/
+devel/
+.catkin_workspace
+# catkin_make 生成的 src/CMakeLists.txt 符号链接
+src/CMakeLists.txt
+# ROS 包符号链接
+src/livox_ros_driver
 
 # 从 GitHub 克隆的第三方源码（由脚本自动获取）
-third_party/livox_sdk/
-third_party/livox_ros_driver/
+src/third_party/livox_sdk/
+src/third_party/livox_ros_driver/
 
 # IDE / 系统文件
 .vscode/

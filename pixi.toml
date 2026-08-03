@@ -14,7 +14,7 @@ activate_ros = { cmd = "echo \"source $(pixi info --manifest-path pixi.toml | gr
 # ============================================================
 # 初始化工作空间
 # ============================================================
-init_workspace = { cmd = "mkdir -p devel_ws/src", description = "创建 catkin 工作空间目录" }
+init_workspace = { cmd = "mkdir -p src", description = "创建 src 目录" }
 
 # ============================================================
 # 克隆 & 构建 livox_sdk

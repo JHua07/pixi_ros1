@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-DRIVER_DIR="third_party/livox_ros_driver"
+DRIVER_DIR="src/third_party/livox_ros_driver"
 
 if [ ! -d "$DRIVER_DIR" ]; then
     echo "Cloning livox_ros_driver..."

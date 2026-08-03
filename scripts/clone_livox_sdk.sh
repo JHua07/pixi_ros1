@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-SDK_DIR="third_party/livox_sdk"
+SDK_DIR="src/third_party/livox_sdk"
 
 if [ ! -d "$SDK_DIR" ]; then
     echo "Cloning Livox-SDK..."

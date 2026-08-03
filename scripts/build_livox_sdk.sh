@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-SDK_DIR="third_party/livox_sdk"
+SDK_DIR="src/third_party/livox_sdk"
 BUILD_DIR="$SDK_DIR/build"
 
 echo "Patching Livox SDK for GCC 14 compatibility..."
