@@ -30,12 +30,28 @@ clone_livox_ros_driver = { cmd = "bash scripts/clone_livox_ros_driver.sh", descr
 
 link_livox_driver = { cmd = "bash scripts/link_livox_driver.sh", description = "软链接 livox_ros_driver 到 catkin 工作空间", depends-on = ["init_workspace", "clone_livox_ros_driver"] }
 
-build_livox_ros_driver = { cmd = "bash scripts/build_livox_ros_driver.sh", description = "编译 livox_ros_driver", depends-on = ["build_livox_sdk", "link_livox_driver"] }
+build_livox_ros_driver = { cmd = "bash scripts/build_livox_ros_driver.sh", description = "编译 livox_ros_driver (ROS 包)", depends-on = ["build_livox_sdk", "link_livox_driver"] }
 
 # ============================================================
-# 一键构建所有源码依赖
+# 构建 Pangolin (ORB_SLAM2 依赖)
 # ============================================================
-build_all = { cmd = "echo 'Running: clone_livox_sdk -> build_livox_sdk -> link_livox_driver -> build_livox_ros_driver'", description = "一键构建 livox_sdk + livox_ros_driver", depends-on = ["build_livox_ros_driver"] }
+build_pangolin = { cmd = "bash scripts/build_pangolin.sh", description = "编译安装 Pangolin (ORB_SLAM2 可视化依赖)" }
+
+# ============================================================
+# 通用 cmake 构建 (使用 src/CMakeLists.txt)
+# ============================================================
+cmake_build = { cmd = """
+    source $CONDA_PREFIX/setup.bash 2>/dev/null
+    rm -rf build devel
+    mkdir -p build && cd build
+    cmake ../src -DBUILD_LIVOX_ROS_DRIVER=$BUILD_LIVOX -DBUILD_ORB_SLAM2=$BUILD_ORB
+    make -j$(nproc)
+""", description = "通用 cmake 构建 (BUILD_LIVOX=ON BUILD_ORB=ON 可选)" }
+
+# ============================================================
+# 一键构建所有
+# ============================================================
+build_all = { cmd = "echo 'Building all packages via CMakeLists.txt...'", description = "一键构建所有包", depends-on = ["build_pangolin", "build_livox_sdk", "link_livox_driver"] }
 
 # ============================================================
 # 打印环境信息
@@ -83,3 +99,12 @@ cmake = { version = ">=3.16", channel = "conda-forge" }
 make = { version = "*", channel = "conda-forge" }
 pkg-config = { version = "*", channel = "conda-forge" }
 compilers = { version = "*", channel = "conda-forge" }
+
+# ============================================================
+# ORB_SLAM2 / Pangolin 依赖
+# ============================================================
+glew = { version = ">=2.0", channel = "conda-forge" }
+libglu = { version = ">=9.0", channel = "conda-forge" }
+libegl = { version = ">=1.7", channel = "conda-forge" }
+libglvnd-devel = { version = ">=1.7", channel = "conda-forge" }
+epoxy = { version = ">=1.5", channel = "conda-forge" }

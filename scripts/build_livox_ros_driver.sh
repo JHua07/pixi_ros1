@@ -54,7 +54,10 @@ fi
 echo "Sourcing ROS environment..."
 source "$CONDA_PREFIX/setup.bash"
 
-echo "Building livox_ros_driver with catkin_make..."
-catkin_make -DCATKIN_DEVEL_PREFIX=devel -DCMAKE_INSTALL_PREFIX="$CONDA_PREFIX"
+echo "Building livox_ros_driver via src/CMakeLists.txt..."
+rm -rf build devel
+mkdir -p build && cd build
+cmake ../src -DBUILD_LIVOX_ROS_DRIVER=ON -DBUILD_ORB_SLAM2=OFF -DCATKIN_DEVEL_PREFIX=../devel -DCMAKE_INSTALL_PREFIX="$CONDA_PREFIX"
+make -j$(nproc)
 
 echo "livox_ros_driver build complete."

@@ -7,8 +7,6 @@ pixi.lock
 build/
 devel/
 .catkin_workspace
-# catkin_make 生成的 src/CMakeLists.txt 符号链接
-src/CMakeLists.txt
 # ROS 包符号链接
 src/livox_ros_driver
 
